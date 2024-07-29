@@ -1,23 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect } from "react";
+import { BrowserRouter } from 'react-router-dom';
+import axios from "axios";
+
+import Routing from './Routing';
 
 function App() {
+
+  const [dogs, setDogs] = useState({
+    data: null,
+    isLoading: true
+  });
+
+  useEffect(() => {
+    async function loadDogs(){
+      const response = await axios.get("http://localhost:5001/dogs")
+      setDogs({
+        data: response.data,
+        isLoading: false
+      })
+    }
+    loadDogs()
+  }, [])
+
+  if (dogs.isLoading) {
+    return <h1>Loading...</h1>
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        <Routing dogs={dogs.data} />
+      </BrowserRouter>
     </div>
   );
 }
